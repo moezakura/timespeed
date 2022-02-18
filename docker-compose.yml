@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+  influxdb:
+    image: influxdb
+    container_name: local-influxdb
+    volumes:
+      - ./docker-data/influxdb2:/var/lib/influxdb2
+    ports:
+      - 8086:8086
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 8085:3000
+    user: '472'
+    volumes:
+      - ./docker-data/grafana:/var/lib/grafana
+    depends_on:
+      - influxdb
