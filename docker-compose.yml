@@ -6,6 +6,8 @@ services:
     container_name: local-influxdb
     volumes:
       - ./docker-data/influxdb2:/var/lib/influxdb2
+    networks:
+      - influxdbs
     ports:
       - 8086:8086
 
@@ -18,3 +20,24 @@ services:
       - ./docker-data/grafana:/var/lib/grafana
     depends_on:
       - influxdb
+
+  time_speed_app: &time_speed_app_base
+    build:
+      context: .
+      dockerfile: docker-compose/app/Dockerfile
+    volumes:
+      - .:/workspace/
+    networks:
+      - influxdbs
+    depends_on:
+      - influxdb
+
+  shop_debug:
+    <<: *time_speed_app_base
+    container_name: time_speed_debug_app
+    depends_on:
+      - influxdb
+    command: cargo watch -x run
+
+networks:
+  influxdbs:
